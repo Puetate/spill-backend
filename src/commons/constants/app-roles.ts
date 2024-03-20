@@ -1,0 +1,8 @@
+export const APP_ROLES = {
+  ADMIN: "ADMIN",
+  SUPER_ADMIN: "SUPER_ADMIN",
+  USER: "USER",
+  POLICE: "POLICE",
+  MEDIC: "MEDIC",
+  ALL_LOGGED_USERS: "ALL_LOGGED_USERS"
+} as const;

@@ -1,0 +1,467 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Person {
+  personID     Int       @id @default(autoincrement())
+  names        String
+  surnames     String
+  phone        String
+  address      String
+  dni          String    @unique
+  personUrlImg String?
+  statusID     Int       @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated  DateTime  @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated  DateTime? @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated  String? // Usuario que crea el registro
+  userUpdated  String? // Usuario que modifica el registro
+  version      Int       @default(0) // Versión del registro modificado
+  Client       Client[]
+  User         User[]
+}
+
+model Role {
+  roleID      Int          @id @default(autoincrement())
+  rolName     String
+  WorkerType  WorkerType[]
+  UserRoles   UserRoles[]
+  statusID    Int          @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated DateTime     @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated DateTime?    @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated String? // Usuario que crea el registro
+  userUpdated String? // Usuario que modifica el registro
+  version     Int          @default(0) // Versión del registro modificado
+}
+
+model ExitType {
+  exitTypeID        Int                 @id @default(autoincrement())
+  exitTypeName      String
+  AttendanceControl AttendanceControl[]
+  statusID          Int                 @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated       DateTime            @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated       DateTime?           @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated       String? // Usuario que crea el registro
+  userUpdated       String? // Usuario que modifica el registro
+  version           Int                 @default(0) // Versión del registro modificado
+}
+
+model Machine {
+  machineID             Int                     @id @default(autoincrement())
+  machineName           String
+  machineUrlImg         String
+  MachineArticleCost    MachineArticleCost[]
+  MachineAdditionalCost MachineAdditionalCost[]
+  ManpowerMachine       ManpowerMachine[]
+  statusID              Int                     @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated           DateTime                @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated           DateTime?               @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated           String? // Usuario que crea el registro
+  userUpdated           String? // Usuario que modifica el registro
+  version               Int                     @default(0) // Versión del registro modificado
+}
+
+model ArticleType {
+  articleTypeID Int           @id @default(autoincrement())
+  articleName   String
+  articleUrlImg String
+  Article       Article[]
+  Additional    Additional[]
+  Gift          Gift[]
+  OrderDetail   OrderDetail[]
+  statusID      Int           @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated   DateTime      @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated   DateTime?     @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated   String? // Usuario que crea el registro
+  userUpdated   String? // Usuario que modifica el registro
+  version       Int           @default(0) // Versión del registro modificado
+}
+
+model ClientType {
+  clientTypeID Int       @id @default(autoincrement())
+  clientName   String
+  Client       Client[]
+  statusID     Int       @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated  DateTime  @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated  DateTime? @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated  String? // Usuario que crea el registro
+  userUpdated  String? // Usuario que modifica el registro
+  version      Int       @default(0) // Versión del registro modificado
+}
+
+model Size {
+  sizeID      Int           @id @default(autoincrement())
+  sizeNumber  Int
+  sizeLetter  String
+  OrderGift   OrderGift[]
+  OrderDetail OrderDetail[]
+  statusID    Int           @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated DateTime      @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated DateTime?     @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated String? // Usuario que crea el registro
+  userUpdated String? // Usuario que modifica el registro
+  version     Int           @default(0) // Versión del registro modificado
+}
+
+model Sex {
+  sexID       Int           @id @default(autoincrement())
+  sexName     String
+  sexAbbr     String
+  OrderDetail OrderDetail[]
+  statusID    Int           @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated DateTime      @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated DateTime?     @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated String? // Usuario que crea el registro
+  userUpdated String? // Usuario que modifica el registro
+  version     Int           @default(0) // Versión del registro modificado
+}
+
+model User {
+  userID            Int                 @id @default(autoincrement())
+  person            Person              @relation(fields: [personID], references: [personID])
+  personID          Int
+  userEmail         String              @unique
+  userPassword      String
+  userUrlImg        String
+  UserRoles         UserRoles[]
+  AttendanceControl AttendanceControl[]
+  MoneyOrder        MoneyOrder[]
+  Order             Order[]
+  Manpower          Manpower[]
+  statusID          Int                 @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated       DateTime            @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated       DateTime?           @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated       String? // Usuario que crea el registro
+  userUpdated       String? // Usuario que modifica el registro
+  version           Int                 @default(0) // Versión del registro modificado
+}
+
+model Client {
+  clientID     Int        @id @default(autoincrement())
+  companyName  String?
+  email        String
+  clientType   ClientType @relation(references: [clientTypeID], fields: [clientTypeID])
+  clientTypeID Int
+  person       Person     @relation(references: [personID], fields: [personID])
+  personID     Int
+  Order        Order[]
+  statusID     Int        @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated  DateTime   @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated  DateTime?  @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated  String? // Usuario que crea el registro
+  userUpdated  String? // Usuario que modifica el registro
+  version      Int        @default(0) // Versión del registro modificado
+}
+
+model Gift {
+  giftID        Int         @id @default(autoincrement())
+  giftUrlImg    String
+  articleType   ArticleType @relation(references: [articleTypeID], fields: [articleTypeID])
+  articleTypeID Int
+  OrderGift     OrderGift[]
+  statusID      Int         @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated   DateTime    @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated   DateTime?   @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated   String? // Usuario que crea el registro
+  userUpdated   String? // Usuario que modifica el registro
+  version       Int         @default(0) // Versión del registro modificado
+}
+
+model Order {
+  orderID      Int           @id @default(autoincrement())
+  deliveryDate DateTime
+  total        Decimal
+  user         User          @relation(fields: [userID], references: [userID])
+  userID       Int
+  client       Client        @relation(references: [clientID], fields: [clientID])
+  clientID     Int
+  OrderGift    OrderGift[]
+  OrderDetail  OrderDetail[]
+  Manpower     Manpower[]
+  statusID     Int           @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated  DateTime      @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated  DateTime?     @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated  String? // Usuario que crea el registro
+  userUpdated  String? // Usuario que modifica el registro
+  version      Int           @default(0) // Versión del registro modificado
+}
+
+model OrderGift {
+  orderGiftID Int       @id @default(autoincrement())
+  gift        Gift      @relation(references: [giftID], fields: [giftID])
+  giftID      Int
+  order       Order     @relation(references: [orderID], fields: [orderID])
+  orderID     Int
+  size        Size?     @relation(references: [sizeID], fields: [sizeID])
+  sizeID      Int
+  statusID    Int       @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated DateTime  @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated DateTime? @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated String? // Usuario que crea el registro
+  userUpdated String? // Usuario que modifica el registro
+  version     Int       @default(0) // Versión del registro modificado
+}
+
+model OrderDetail {
+  orderDetailID    Int                @id @default(autoincrement())
+  quantity         Int
+  comments         String
+  order            Order              @relation(references: [orderID], fields: [orderID])
+  orderID          Int
+  articleType      ArticleType        @relation(references: [articleTypeID], fields: [articleTypeID])
+  articleTypeID    Int
+  size             Size?              @relation(references: [sizeID], fields: [sizeID])
+  sizeID           Int
+  sex              Sex?               @relation(references: [sexID], fields: [sexID])
+  sexID            Int
+  EmbroideryDetail EmbroideryDetail[]
+  SublimatedDetail SublimatedDetail[]
+  statusID         Int                @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated      DateTime           @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated      DateTime?          @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated      String? // Usuario que crea el registro
+  userUpdated      String? // Usuario que modifica el registro
+  version          Int                @default(0) // Versión del registro modificado
+}
+
+model EmbroideryDetail {
+  embroideryDetailID     Int         @id @default(autoincrement())
+  embroideryDetailUrlImg String
+  orderDetail            OrderDetail @relation(references: [orderDetailID], fields: [orderDetailID])
+  orderDetailID          Int
+  statusID               Int         @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated            DateTime    @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated            DateTime?   @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated            String? // Usuario que crea el registro
+  userUpdated            String? // Usuario que modifica el registro
+  version                Int         @default(0) // Versión del registro modificado
+}
+
+model SublimatedDetail {
+  sublimatedDetailID     Int         @id @default(autoincrement())
+  sublimatedDetailUrlImg String
+  orderDetail            OrderDetail @relation(references: [orderDetailID], fields: [orderDetailID])
+  orderDetailID          Int
+  statusID               Int         @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated            DateTime    @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated            DateTime?   @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated            String? // Usuario que crea el registro
+  userUpdated            String? // Usuario que modifica el registro
+  version                Int         @default(0) // Versión del registro modificado
+}
+
+model UserRoles {
+  userRoleID  Int       @id @default(autoincrement())
+  role        Role      @relation(fields: [roleID], references: [roleID])
+  roleID      Int
+  user        User      @relation(fields: [userID], references: [userID])
+  userID      Int
+  statusID    Int       @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated DateTime  @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated DateTime? @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated String? // Usuario que crea el registro
+  userUpdated String? // Usuario que modifica el registro
+  version     Int       @default(0) // Versión del registro modificado
+}
+
+model WorkerType {
+  workerTypeID       Int                 @id @default(autoincrement())
+  workerTypeName     String
+  workerTypeCostHour Decimal
+  role               Role                @relation(fields: [roleID], references: [roleID])
+  roleID             Int
+  AttendanceControl  AttendanceControl[]
+  statusID           Int                 @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated        DateTime            @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated        DateTime?           @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated        String? // Usuario que crea el registro
+  userUpdated        String? // Usuario que modifica el registro
+  version            Int                 @default(0) // Versión del registro modificado
+}
+
+model AttendanceControl {
+  attendanceControlID Int        @id @default(autoincrement())
+  attendanceEntryDate DateTime
+  attendanceExitDate  DateTime
+  costHour            Decimal
+  user                User       @relation(fields: [userID], references: [userID])
+  userID              Int
+  workerType          WorkerType @relation(fields: [workerTypeID], references: [workerTypeID])
+  workerTypeID        Int
+  exitType            ExitType   @relation(fields: [exitTypeID], references: [exitTypeID])
+  exitTypeID          Int
+  statusID            Int        @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated         DateTime   @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated         DateTime?  @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated         String? // Usuario que crea el registro
+  userUpdated         String? // Usuario que modifica el registro
+  version             Int        @default(0) // Versión del registro modificado
+}
+
+model MoneyOrder {
+  moneyOrderID Int       @id @default(autoincrement())
+  startDate    DateTime
+  endDate      DateTime
+  issueDate    DateTime
+  isAgreement  Boolean
+  manpowers    Int[]
+  total        Decimal
+  user         User      @relation(fields: [userID], references: [userID])
+  userID       Int
+  statusID     Int       @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated  DateTime  @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated  DateTime? @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated  String? // Usuario que crea el registro
+  userUpdated  String? // Usuario que modifica el registro
+  version      Int       @default(0) // Versión del registro modificado
+}
+
+model Article {
+  articleID          Int                  @id @default(autoincrement())
+  articleName        String
+  articleUrlImg      String
+  totalCost          Decimal
+  articleType        ArticleType          @relation(references: [articleTypeID], fields: [articleTypeID])
+  articleTypeID      Int
+  MachineArticleCost MachineArticleCost[]
+  Manpower           Manpower[]
+  statusID           Int                  @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated        DateTime             @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated        DateTime?            @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated        String? // Usuario que crea el registro
+  userUpdated        String? // Usuario que modifica el registro
+  version            Int                  @default(0) // Versión del registro modificado
+}
+
+model Additional {
+  additionalID          Int                     @id @default(autoincrement())
+  additionalName        String
+  additionalUrlImg      String
+  totalCost             Decimal
+  articleType           ArticleType             @relation(references: [articleTypeID], fields: [articleTypeID])
+  articleTypeID         Int
+  MachineAdditionalCost MachineAdditionalCost[]
+  ManpowerAdditional    ManpowerAdditional[]
+  statusID              Int                     @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated           DateTime                @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated           DateTime?               @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated           String? // Usuario que crea el registro
+  userUpdated           String? // Usuario que modifica el registro
+  version               Int                     @default(0) // Versión del registro modificado
+}
+
+model MachineArticleCost {
+  machineArticleCost Int       @id @default(autoincrement())
+  costProduction     Decimal
+  article            Article   @relation(references: [articleID], fields: [articleID])
+  articleID          Int
+  machine            Machine   @relation(references: [machineID], fields: [machineID])
+  machineID          Int
+  statusID           Int       @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated        DateTime  @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated        DateTime? @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated        String? // Usuario que crea el registro
+  userUpdated        String? // Usuario que modifica el registro
+  version            Int       @default(0) // Versión del registro modificado
+}
+
+model MachineAdditionalCost {
+  machineAdditionalCost Int        @id @default(autoincrement())
+  costProduction        Decimal
+  additional            Additional @relation(references: [additionalID], fields: [additionalID])
+  additionalID          Int
+  machine               Machine    @relation(references: [machineID], fields: [machineID])
+  machineID             Int
+  statusID              Int        @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated           DateTime   @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated           DateTime?  @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated           String? // Usuario que crea el registro
+  userUpdated           String? // Usuario que modifica el registro
+  version               Int        @default(0) // Versión del registro modificado
+}
+
+model Manpower {
+  manpowerID         Int                  @id @default(autoincrement())
+  quantity           Int
+  article            Article              @relation(references: [articleID], fields: [articleID])
+  articleID          Int
+  order              Order                @relation(references: [orderID], fields: [orderID])
+  orderID            Int
+  user               User                 @relation(references: [userID], fields: [userID])
+  userID             Int
+  ManpowerMachine    ManpowerMachine[]
+  ManpowerAdditional ManpowerAdditional[]
+  statusID           Int                  @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated        DateTime             @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated        DateTime?            @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated        String? // Usuario que crea el registro
+  userUpdated        String? // Usuario que modifica el registro
+  version            Int                  @default(0) // Versión del registro modificado
+}
+
+model ManpowerMachine {
+  manpowerMachineID Int       @id @default(autoincrement())
+  costProduction    Decimal
+  manpower          Manpower  @relation(references: [manpowerID], fields: [manpowerID])
+  manpowerID        Int
+  machine           Machine   @relation(references: [machineID], fields: [machineID])
+  machineID         Int
+  statusID          Int       @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated       DateTime  @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated       DateTime? @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated       String? // Usuario que crea el registro
+  userUpdated       String? // Usuario que modifica el registro
+  version           Int       @default(0) // Versión del registro modificado
+}
+
+model ManpowerAdditional {
+  manpowerAdditionalID Int        @id @default(autoincrement())
+  costProduction       Decimal
+  manpower             Manpower   @relation(references: [manpowerID], fields: [manpowerID])
+  manpowerID           Int
+  additional           Additional @relation(references: [additionalID], fields: [additionalID])
+  additionalID         Int
+  statusID             Int        @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated          DateTime   @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated          DateTime?  @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated          String? // Usuario que crea el registro
+  userUpdated          String? // Usuario que modifica el registro
+  version              Int        @default(0) // Versión del registro modificado
+}
+
+model CustomizeOrder {
+  customizeOrderID Int       @id @default(autoincrement())
+  name             String?
+  number           String?
+  statusID         Int       @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated      DateTime  @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated      DateTime? @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated      String? // Usuario que crea el registro
+  userUpdated      String? // Usuario que modifica el registro
+  version          Int       @default(0) // Versión del registro modificado
+}
+
+model Supplier {
+  supplierID      Int       @id @default(autoincrement())
+  supplierName    String
+  supplierRuc     String
+  supplierAddress String
+  supplierPhone   String
+  supplierEmail   String
+  statusID        Int       @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated     DateTime  @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated     DateTime? @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated     String? // Usuario que crea el registro
+  userUpdated     String? // Usuario que modifica el registro
+  version         Int       @default(0) // Versión del registro modificado
+}
