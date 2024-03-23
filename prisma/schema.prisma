@@ -138,6 +138,7 @@ model User {
   MoneyOrder        MoneyOrder[]
   Order             Order[]
   Manpower          Manpower[]
+  AdvancedPayment   AdvancedPayment[]
   statusID          Int                 @default(1) // Estado, 1 activo o 0 inactivo
   dateCreated       DateTime            @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
   dateUpdated       DateTime?           @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
@@ -161,6 +162,18 @@ model Client {
   userCreated  String? // Usuario que crea el registro
   userUpdated  String? // Usuario que modifica el registro
   version      Int        @default(0) // Versión del registro modificado
+}
+
+model AdvancedPayment {
+  advancedPaymentID Int       @id @default(autoincrement())
+  user              User      @relation(fields: [userID], references: [userID])
+  userID            Int
+  statusID          Int       @default(1) // Estado, 1 activo o 0 inactivo
+  dateCreated       DateTime  @default(now()) @db.Timestamptz(6) // Fecha de creación del registro insertado
+  dateUpdated       DateTime? @updatedAt @db.Timestamptz(6) // Fecha de modificación del registro
+  userCreated       String? // Usuario que crea el registro
+  userUpdated       String? // Usuario que modifica el registro
+  version           Int       @default(0) // Versión del registro modificado
 }
 
 model Gift {

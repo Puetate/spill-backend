@@ -34,8 +34,8 @@ export class PersonService {
     return newPerson;
   }
 
-  findAll() {
-    return `This action returns all person`;
+  async findAll() {
+    return await this.prismaHost.tx.person.findMany(); 
   }
 
   findOne(id: number) {

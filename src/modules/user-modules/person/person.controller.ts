@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe } from '@nestjs/common';
-import { PersonService } from './person.service';
+import { PersonService } from './PersonService';
 import { CreatePersonDto } from './dto/create-person.dto';
 import { UpdatePersonDto } from './dto/update-person.dto';
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
@@ -23,7 +23,6 @@ export class PersonController {
     })
   )
   avatarImg: Express.Multer.File) {
-
     return this.personService.create(createPersonDto, avatarImg);
   }
 
